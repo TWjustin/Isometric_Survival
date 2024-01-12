@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +8,8 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance { get; set; }
     
     
-    private GameObject selectedPlayer;
     private PlayerController player;
     
-    private Vector3 targetPosition;
     public float offsetDistance = 1.0f;
     
     private void Awake()
@@ -37,39 +36,53 @@ public class PlayerManager : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(clickPosition, Vector2.zero);
             
 
-            if (hit.collider != null)
+            if (hit.collider)
             {
-                Debug.Log(hit.collider.gameObject.name);
+                GameObject hitObject = hit.collider.gameObject;
                 
-
-                if (hit.collider.gameObject.CompareTag("Player"))
+                Debug.Log(hitObject.name);
+                
+                if (hitObject.CompareTag("Player"))
                 {
-                    if (selectedPlayer != null)
+                    PlayerController newPlayer = hitObject.GetComponent<PlayerController>();
+
+                    if (!player)
+                    {
+                        player = newPlayer;
+                        player.selectionFrame.SetActive(true);
+                    }
+                    else if (player != newPlayer)
+                    {
+                        Deselect();
+                        player = newPlayer;
+                        player.selectionFrame.SetActive(true);
+                    }
+                    else if (player == newPlayer)
                     {
                         Deselect();
                     }
-                    selectedPlayer = hit.collider.gameObject;
-                    player = selectedPlayer.GetComponent<PlayerController>();
-                    player.selectionFrame.SetActive(true);
                 }
-                else if (hit.collider.gameObject.CompareTag("Interactable") && player != null)
+                else if (player)
                 {
-                    targetPosition = hit.transform.position;
+                    Vector3 targetPosition = hitObject.transform.position;
                     Vector3 offset = (transform.position - targetPosition).normalized * offsetDistance;
                     Vector3 destination = targetPosition + offset;
-
                     player.agent.SetDestination(destination);
+                    
+                    if (hitObject.CompareTag("Drops"))
+                    {
+                        player.inventory.AddItem(hitObject.GetComponent<Item>().item, 1);
+                        Destroy(hitObject);
+                    }
+                    
                     Deselect();
                 }
-                else if (player != null)
-                {
-                    player.agent.SetDestination(hit.point);
-                    Deselect();
-                }
+
             }
             else
             {
-                Debug.Log("No hit");
+                player.agent.SetDestination(clickPosition);
+                Deselect();
             }
             
         }
@@ -77,8 +90,9 @@ public class PlayerManager : MonoBehaviour
     
     private void Deselect()
     {
-        selectedPlayer = null;
         player.selectionFrame.SetActive(false);
         player = null;
     }
+
+    
 }

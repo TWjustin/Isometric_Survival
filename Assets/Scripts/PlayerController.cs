@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +10,8 @@ public class PlayerController : MonoBehaviour
     public NavMeshAgent agent;
     public Animator animator;
     public SpriteRenderer spriteRenderer;
+    
+    public InventoryObjects inventory;
 
     private void Start()
     {
@@ -40,4 +41,11 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("IsWalking", false);
         }
     }
+    
+    
+    private void OnApplicationQuit()    // 暫時
+    {
+        inventory.container.Clear();
+    }
+    
 }

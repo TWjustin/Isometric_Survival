@@ -52,6 +52,7 @@ MonoBehaviour:
   agent: {fileID: 6439576219915025812}
   animator: {fileID: 7873429901260274387}
   spriteRenderer: {fileID: 6439576221239214192}
+  inventory: {fileID: 0}
 --- !u!70 &6439576219915025810
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
