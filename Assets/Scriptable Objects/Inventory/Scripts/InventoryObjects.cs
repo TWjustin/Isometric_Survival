@@ -6,27 +6,39 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class InventoryObjects : ScriptableObject
 {
+    public GameObject inventoryPrefab;
     public List<InventorySlot> container = new List<InventorySlot>();
-    public bool changed;
+    
+    // public bool changed;
+    public bool isFull;
 
     public void AddItem(ItemObject _item, int _amount)
     {
+        int maxContainerSize = inventoryPrefab.transform.childCount;
         
-        InventorySlot existingSlot = container.Find(slot => slot.item == _item);
+        
+        InventorySlot existingSlot = container.Find(id => id.item == _item);
         
         if (existingSlot != null)
         {
             existingSlot.AddAmount(_amount);
+            isFull = false;
         }
-        else
+        else if (container.Count < maxContainerSize)
         {
             InventorySlot emptySlot = new InventorySlot();
 
             emptySlot.item = _item;
             emptySlot.AddAmount(_amount);
             container.Add(emptySlot);
+            isFull = false;
         }
-        changed = true;
+        else
+        {
+            isFull = true;
+            Debug.Log("Inventory is full");
+        }
+        
     }
 }
 

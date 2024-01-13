@@ -12,5 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b992a5e70694a6a4db77c1a3e0eb0315, type: 3}
   m_Name: Player_A_Inventory
   m_EditorClassIdentifier: 
-  container: []
+  inventoryPrefab: {fileID: 7510779659838929488, guid: ab7b0c0e5f56ef5408e06de6708d0518, type: 3}
+  container:
+  - item: {fileID: 11400000, guid: afa2a9017ce0cf94d905892f9f5e8ac1, type: 2}
+    amount: 2
+  - item: {fileID: 11400000, guid: bc07bf8113496464d80571452b35ec7f, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 93d8395c41b84b44e8cc9d8d4db70a59, type: 2}
+    amount: 7
+  - item: {fileID: 11400000, guid: 5d0d07bae9d93be458d8c7cf604d1359, type: 2}
+    amount: 1
   changed: 0
+  isFull: 1

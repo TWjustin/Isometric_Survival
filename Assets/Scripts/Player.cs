@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerController : MonoBehaviour
+public class Player : MonoBehaviour
 {
     public GameObject selectionFrame;
 
@@ -12,14 +12,21 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     
     public InventoryObjects inventory;
-
+    
+    
     private void Start()
     {
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+        
     }
 
     private void Update()
+    {
+        PlayAnimation();
+    }
+
+    private void PlayAnimation()
     {
         if (agent.hasPath)
         {
@@ -41,11 +48,11 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("IsWalking", false);
         }
     }
-    
-    
-    private void OnApplicationQuit()    // 暫時
-    {
-        inventory.container.Clear();
-    }
+
+
+    // private void OnApplicationQuit()    // 暫時
+    // {
+    //     inventory.container.Clear();
+    // }
     
 }
