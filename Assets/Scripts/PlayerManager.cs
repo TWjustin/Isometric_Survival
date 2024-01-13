@@ -8,8 +8,9 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance { get; set; }
     
     
-    private PlayerController player;
-    
+    public PlayerController player;
+
+    public GameObject hitObject;
     public float offsetDistance = 1.0f;
     
     private void Awake()
@@ -27,7 +28,6 @@ public class PlayerManager : MonoBehaviour
     void Update()
     {
         
-        
         if (Input.GetMouseButtonDown(0))
         {
             
@@ -38,7 +38,7 @@ public class PlayerManager : MonoBehaviour
 
             if (hit.collider)
             {
-                GameObject hitObject = hit.collider.gameObject;
+                hitObject = hit.collider.gameObject;
                 
                 Debug.Log(hitObject.name);
                 
@@ -53,46 +53,72 @@ public class PlayerManager : MonoBehaviour
                     }
                     else if (player != newPlayer)
                     {
-                        Deselect();
+                        player.selectionFrame.SetActive(false); //上一個player
+                        
                         player = newPlayer;
-                        player.selectionFrame.SetActive(true);
+                        player.selectionFrame.SetActive(true);  //新的player
                     }
                     else if (player == newPlayer)
                     {
-                        Deselect();
+                        player.selectionFrame.SetActive(false);
+                        player = null;
                     }
                 }
-                else if (player)
+                else if (hitObject.CompareTag("Drops"))
                 {
-                    Vector3 targetPosition = hitObject.transform.position;
-                    Vector3 offset = (transform.position - targetPosition).normalized * offsetDistance;
-                    Vector3 destination = targetPosition + offset;
-                    player.agent.SetDestination(destination);
                     
-                    if (hitObject.CompareTag("Drops"))
+                    if (player)
                     {
-                        player.inventory.AddItem(hitObject.GetComponent<Item>().item, 1);
-                        Destroy(hitObject);
+                        MoveBesideTarget(hitObject.transform.position);
+                        
+                        player.selectionFrame.SetActive(false);
+                        StartCoroutine(WaitForMoving());
+                        
+                        
                     }
-                    
-                    Deselect();
                 }
 
             }
             else
             {
-                player.agent.SetDestination(clickPosition);
-                Deselect();
+                if (player)
+                {
+                    player.agent.SetDestination(clickPosition);
+                    player.selectionFrame.SetActive(false);
+                    
+                    StartCoroutine(WaitForMoving());
+                    
+                }
+                
             }
             
         }
     }
     
-    private void Deselect()
+    private IEnumerator WaitForMoving()
     {
-        player.selectionFrame.SetActive(false);
+        yield return new WaitUntil(() => !player.agent.hasPath && !player.agent.pathPending);
+        
+        if (hitObject.CompareTag("Drops"))
+        {
+            PickUpItem(hitObject);
+        }
         player = null;
     }
-
     
+    private void MoveBesideTarget(Vector3 targetPosition)
+    {
+        Vector3 offset = (transform.position - targetPosition).normalized * offsetDistance;
+        Vector3 destination = targetPosition + offset;
+        player.agent.SetDestination(destination);
+    }
+    
+    private void PickUpItem(GameObject g)
+    {
+        player.inventory.AddItem(g.GetComponent<Item>().item, 1);
+        Destroy(g);
+        
+    }
+
+
 }

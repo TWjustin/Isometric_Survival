@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,8 +10,14 @@ public class DisplayInventory : MonoBehaviour
     
     public List<GameObject> slots = new List<GameObject>();
 
+    private void Start()
+    {
+        ClearSlots();
+    }
+
     void Update()
     {
+        
         if (inventory.changed)
         {
             UpdateDisplay();
@@ -18,7 +25,7 @@ public class DisplayInventory : MonoBehaviour
         }
     }
 
-    public void UpdateDisplay()
+    private void UpdateDisplay()
     {
         for (int i = 0; i < inventory.container.Count; i++)
         {
@@ -27,5 +34,12 @@ public class DisplayInventory : MonoBehaviour
         }
     }
     
-    
+    private void ClearSlots()
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
+            slots[i].GetComponentInChildren<Text>().text = "";
+        }
+    }
 }
