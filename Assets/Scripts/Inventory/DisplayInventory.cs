@@ -21,16 +21,18 @@ public class DisplayInventory : MonoBehaviour
         }
     }
 
-    public void UpdateDisplay(InventoryObjects inventoryInfo)
+    public void UpdateDisplay(Player currentPlayer)
     {
         // 在这里执行接收到事件时的逻辑
         ClearSlots();
         
-        for (int i = 0; i < inventoryInfo.container.Count; i++)
+        List<InventorySlot> container = currentPlayer.inventory.container;
+
+        for (int i = 0; i < container.Count; i++)
         {
             Transform slot = transform.GetChild(i);
-            slot.GetChild(0).GetComponent<Image>().sprite = inventoryInfo.container[i].item.itemImage;
-            slot.GetComponentInChildren<Text>().text = inventoryInfo.container[i].amount.ToString();
+            slot.GetChild(0).GetComponent<Image>().sprite = container[i].item.itemImage;
+            slot.GetComponentInChildren<Text>().text = container[i].amount.ToString();
         }
         
         

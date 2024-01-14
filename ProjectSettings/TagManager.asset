@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Interactable
-  - Drops
+  - Item
   layers:
   - Default
   - TransparentFX

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3905732575277120921}
   m_Layer: 0
   m_Name: Twig
-  m_TagString: Drops
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881560896bc67cb4892fa3f1db9587dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickupRadius: 1.2
   item: {fileID: 11400000, guid: 077e76017738398449ff00285dc884bf, type: 2}
 --- !u!61 &3905732575277120921
 BoxCollider2D:

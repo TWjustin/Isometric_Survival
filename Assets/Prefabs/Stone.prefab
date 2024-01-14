@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8499083603906365975}
   m_Layer: 0
   m_Name: Stone
-  m_TagString: Drops
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881560896bc67cb4892fa3f1db9587dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickupRadius: 1.2
   item: {fileID: 11400000, guid: 93d8395c41b84b44e8cc9d8d4db70a59, type: 2}
 --- !u!61 &8499083603906365975
 BoxCollider2D:

@@ -5,14 +5,11 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    private static PlayerManager Instance { get; set; }
+    public static PlayerManager Instance { get; set; }
     
-    public Player player;   // 當前玩家
-    
-    public GameObject inventoryPanel;
+    public Player currentPlayer;   // 當前玩家
 
-    public GameObject hitObject;
-    public float offsetDistance = 1.0f;
+    public DisplayInventory displayInventory;
     
     private void Awake()
     {
@@ -25,97 +22,48 @@ public class PlayerManager : MonoBehaviour
             Instance = this;
         }
     }
-
-    void Update()
+    
+    
+    void OnEnable()
     {
-        
-        if (Input.GetMouseButtonDown(0))
+        InputHandler.OnPlayerClick += OnPlayerClicked;
+    }
+
+    void OnDisable()
+    {
+        InputHandler.OnPlayerClick -= OnPlayerClicked;
+    }
+
+    private void OnPlayerClicked(GameObject clickedObject)
+    {
+        Player newPlayer = clickedObject.GetComponent<Player>();
+
+        if (currentPlayer == newPlayer)
         {
-            
-            Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            clickPosition.z = 0f;
-            RaycastHit2D hit = Physics2D.Raycast(clickPosition, Vector2.zero);
-            
-
-            if (hit.collider)
-            {
-                hitObject = hit.collider.gameObject;
-                
-                Debug.Log(hitObject.name);
-                
-                if (hitObject.CompareTag("Player"))
-                {
-                    Player newPlayer = hitObject.GetComponent<Player>();
-
-                    if (player == newPlayer)
-                    {
-                        player.selectionFrame.SetActive(false);
-                        player = null;
-                    }
-                    else
-                    {
-                        SwitchPlayer(newPlayer);
-                    }
-                    
-                }
-                else if (player)
-                {
-                    player.agent.SetDestination(hitObject.transform.position);
-                    
-                    player.selectionFrame.SetActive(false);
-                    StartCoroutine(WaitForMoving());
-                }
-
-            }
-            else
-            {
-                if (player)
-                {
-                    player.agent.SetDestination(clickPosition);
-                    player.selectionFrame.SetActive(false);
-                    
-                    StartCoroutine(WaitForMoving());
-                    
-                }
-                
-            }
-            
+            currentPlayer.isSeleced = false;
+            currentPlayer.selectionFrame.SetActive(false);
+        }
+        else
+        {
+            SwitchPlayer(newPlayer);
         }
     }
     
-    private IEnumerator WaitForMoving()
-    {
-        yield return new WaitUntil(() => !player.agent.hasPath && !player.agent.pathPending);
-        
-        if (hitObject.CompareTag("Drops"))
-        {
-            PickUpItem(hitObject);
-        }
-        player = null;
-    }
-
-    private void PickUpItem(GameObject itemObject)
-    {
-        player.inventory.AddItem(itemObject.GetComponent<Item>().item, 1);
-        if (!player.inventory.isFull)
-        {
-            Destroy(itemObject);
-            inventoryPanel.GetComponent<DisplayInventory>().UpdateDisplay(player.inventory);
-        }
-    }
 
     private void SwitchPlayer(Player newPlayer)
     {
-        if (player)
+        if (currentPlayer)
         {
-            player.selectionFrame.SetActive(false); //上一個player
+            currentPlayer.isSeleced = false; //上一個player
+            currentPlayer.selectionFrame.SetActive(false);
         }
 
-        player = newPlayer; // 切换当前玩家
-        Debug.Log("Switched to " + player.name);
-
-        inventoryPanel.GetComponent<DisplayInventory>().UpdateDisplay(player.inventory);
-
-        player.selectionFrame.SetActive(true);  //新的player
+        currentPlayer = newPlayer; // 切换当前玩家
+        
+        Debug.Log("Switched to " + currentPlayer.name);    //新的player
+        currentPlayer.isSeleced = true;
+        currentPlayer.selectionFrame.SetActive(true);
+        
+        displayInventory.UpdateDisplay(currentPlayer);
     }
 }
