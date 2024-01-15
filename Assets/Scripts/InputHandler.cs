@@ -12,7 +12,10 @@ public class InputHandler : MonoBehaviour
     public GameObject indicatorGem;
 
     private GameObject currentObject;
-    [HideInInspector] public Player currentPlayer;
+    
+    [Header("不可編輯")]
+    public Player currentPlayer;
+    public TimedEventResource currentTimedEventObject;
     
     
     private void Awake()
@@ -46,39 +49,49 @@ public class InputHandler : MonoBehaviour
 
                 if (hit.collider.gameObject == currentObject)
                 {
+                    TimedEventManager.Instance.CloseWindow();
                     Deselect();
                 }
                 else
                 {
                     currentObject = hit.collider.gameObject;
                     
-                    if (currentObject.CompareTag("Player"))
+                    if (currentObject.CompareTag("Player"))  // 本來選其他object或選到東西
                     {
                         
-                        SetIndicatorGemAbove(currentObject, 1.5f);
                         currentPlayer = currentObject.GetComponent<Player>();
                         displayInventory.UpdateDisplay(currentPlayer);
+                        
+                        
+                        SetIndicatorGemAbove(currentObject, 1.5f);
                     }
                     else      // 點到其他東西
                     {
+                        currentTimedEventObject = currentObject.GetComponent<TimedEventResource>();
+                        TimedEventManager.Instance.currentTimedEvent = currentTimedEventObject;
                         SetIndicatorGemAbove(currentObject, 0.65f);
+                        
 
-                        if (currentPlayer)
+                        if (currentTimedEventObject.inProgress)
+                        {
+                            TimedEventManager.Instance.OpenWindowAndSetPosition(currentPlayer);
+                        }
+                        else if (currentPlayer)
                         {
                             StartCoroutine(currentPlayer.MoveThenExecute(currentObject));
                         }
-                        
                     }
                 }
 
             }
-            else if (currentObject)
+            else if (currentObject)     // 點到空白處則取消選取
             {
                 if (currentPlayer)
                 {
                     currentPlayer.agent.SetDestination(clickPosition);
                 }
                 
+                TimedEventManager.Instance.CloseWindow();
                 Deselect();
                 
             }
@@ -96,9 +109,9 @@ public class InputHandler : MonoBehaviour
 
     public void Deselect()
     {
+        indicatorGem.SetActive(false);
         currentObject = null;
         currentPlayer = null;
-        indicatorGem.SetActive(false);
     }
     
     

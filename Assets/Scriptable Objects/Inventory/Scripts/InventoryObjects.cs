@@ -7,22 +7,38 @@ using UnityEngine;
 public class InventoryObjects : ScriptableObject
 {
     public List<InventorySlot> container = new List<InventorySlot>();
+
+    private int maxContainerSize;
+    private InventorySlot existingSlot;
     
     
-    public bool CheckThenAddItem(DisplayInventory inventoryPanel, ItemObject _item, int _amount)
+    public bool CheckSlotAvailable(DisplayInventory inventoryPanel, ItemObject _item)
     {
-        bool availableSlot = false;
-        
-        int maxContainerSize = inventoryPanel.transform.childCount;
-        InventorySlot existingSlot = container.Find(slotInfo => slotInfo.item == _item);
-        
-        
+        maxContainerSize = inventoryPanel.transform.childCount;
+        existingSlot = container.Find(slotInfo => slotInfo.item == _item);
+
+        if (existingSlot != null)
+        {
+            return true;
+        }
+        else if (container.Count < maxContainerSize)
+        {
+            return true;
+        }
+        else
+        {
+            Debug.Log("Inventory is full");
+            return false;
+        }
+    }
+    
+    public void AddItemToInventory(DisplayInventory inventoryPanel, ItemObject _item, int _amount)
+    {
+
         if (existingSlot != null)
         {
             existingSlot.AddAmount(_amount);
-            
-            availableSlot = true;
-            
+
         }
         else if (container.Count < maxContainerSize)
         {
@@ -31,16 +47,8 @@ public class InventoryObjects : ScriptableObject
             emptySlot.item = _item;
             emptySlot.AddAmount(_amount);
             container.Add(emptySlot);
-            
-            availableSlot = true;
-        }
-        else
-        {
-            Debug.Log("Inventory is full");
-            availableSlot = false;
         }
         
-        return availableSlot;
     }
 }
 

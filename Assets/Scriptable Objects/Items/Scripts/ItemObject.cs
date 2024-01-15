@@ -14,8 +14,8 @@ public abstract class ItemObject : ScriptableObject
 {
     public string itemName;
     public Sprite itemImage;
-
-    public ItemType type;
+    
+    [HideInInspector] public ItemType type;
     [TextArea(15, 20)]
     public string description;
 }

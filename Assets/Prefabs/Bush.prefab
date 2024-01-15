@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 6349191081787844707}
   - component: {fileID: 3632726737851152310}
   - component: {fileID: 3013276548302042023}
+  - component: {fileID: -2283085735955643241}
   m_Layer: 0
   m_Name: Bush
-  m_TagString: Resources
+  m_TagString: Resource
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,3 +112,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.28, y: 0.81105864}
   m_EdgeRadius: 0
+--- !u!114 &-2283085735955643241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5208266185781533130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc554b2bbab22ff4fa1d8845ad5831ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropItemResult: {fileID: 11400000, guid: afa2a9017ce0cf94d905892f9f5e8ac1, type: 2}
+  dropAmount: 2
+  hours: 0
+  minutes: 0
+  seconds: 5
+  inProgress: 0

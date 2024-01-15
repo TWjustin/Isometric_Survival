@@ -7,13 +7,13 @@ public class Player : MonoBehaviour
 {
     
     [SerializeField] private GameObject body;
-    public NavMeshAgent agent;
+    [HideInInspector] public NavMeshAgent agent;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     
     public InventoryObjects inventory;
     public DisplayInventory displayInventory;
-    
+
 
     private void Start()
     {
@@ -24,26 +24,26 @@ public class Player : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
     }
-    
-
-    private void Update()
-    {
-        PlayAnimation();
-    }
 
 
     public IEnumerator MoveThenExecute(GameObject target)
     {
+        // 開始走
         agent.SetDestination(target.transform.position);
-        
-        yield return new WaitUntil(() => !agent.hasPath && !agent.pathPending);
+        PlayWalkingAnimation();
 
+        yield return new WaitUntil(() => !agent.hasPath && !agent.pathPending);
+        
+        // 開始執行
+        animator.SetBool("IsWalking", false);
         ExecuteClickedObject(target);
-        InputHandler.Instance.Deselect();
+        
+        // 結束執行
+        InputHandler.Instance.Deselect();   // 不要TimedEventManager.Instance.CloseWindow();
     }
     
     
-    private void ExecuteClickedObject(GameObject target)
+    private void ExecuteClickedObject(GameObject target)    // 已經移動完
     {
         Debug.Log("Execute On" + target.name);
         
@@ -51,42 +51,53 @@ public class Player : MonoBehaviour
         {
             case "Item":
                 
-                if (inventory.CheckThenAddItem(displayInventory, target.GetComponent<Item>().item, 1))
+                Item itemScript = target.GetComponent<Item>();
+                
+                if (inventory.CheckSlotAvailable(displayInventory, itemScript.item))
                 {
+                    inventory.AddItemToInventory(displayInventory, itemScript.item, 1);
                     Destroy(target);
-                    InputHandler.Instance.indicatorGem.SetActive(false);
                 }
 
-                if (InputHandler.Instance.currentPlayer == this)
+                if (InputHandler.Instance.currentPlayer == this)    // 不要用else if，跟上面是分開的
                 {
                     displayInventory.UpdateDisplay(this);
                 }
                 break;
             
+            
+            case "Resource":
+
+                TimedEventResource resourceScript = target.GetComponent<TimedEventResource>();
+                
+                if (inventory.CheckSlotAvailable(displayInventory, resourceScript.dropItemResult))
+                {
+                    
+                    TimedEventManager.Instance.OpenWindowAndSetPosition(this);
+                    resourceScript.StartTimer(); // coroutine
+                    
+                    inventory.AddItemToInventory(displayInventory, resourceScript.dropItemResult, resourceScript.dropAmount);
+                    displayInventory.UpdateDisplay(this);
+                }
+
+                break;
         }
     }
+    
 
-
-    private void PlayAnimation()
+    private void PlayWalkingAnimation()
     {
-        if (agent.hasPath)
-        {
-            animator.SetBool("IsWalking", true);
+        animator.SetBool("IsWalking", true);
             
-            Vector3 moveDirection = agent.velocity.normalized;
-            animator.SetFloat("yVelocity", moveDirection.y);
-            if (moveDirection.x > 0)
-            {
-                spriteRenderer.flipX = false;
-            }
-            else if (moveDirection.x < 0)
-            {
-                spriteRenderer.flipX = true;
-            }
-        }
-        else
+        Vector3 moveDirection = agent.velocity.normalized;
+        animator.SetFloat("yVelocity", moveDirection.y);
+        if (moveDirection.x > 0)
         {
-            animator.SetBool("IsWalking", false);
+            spriteRenderer.flipX = false;
+        }
+        else if (moveDirection.x < 0)
+        {
+            spriteRenderer.flipX = true;
         }
     }
 

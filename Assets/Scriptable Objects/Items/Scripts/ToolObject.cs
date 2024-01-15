@@ -3,10 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+public enum ToolType
+{
+    Axe,
+    Pickaxe,
+    Hoe,
+    Scythe,
+    Sword,
+    WateringCan,
+    Default
+}
+
 [CreateAssetMenu(fileName = "New Tool Object", menuName = "Inventory System/Items/Tool")]
 public class ToolObject : ItemObject
 {
-    public int durability;  // 耐久度
+    public ToolType toolType;
+    public float strength;  // 強度
+    public int durability;  // 耐久度，使用一次減一
     
     public void Awake()
     {
