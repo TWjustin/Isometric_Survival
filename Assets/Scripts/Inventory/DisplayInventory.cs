@@ -4,8 +4,7 @@ using UnityEngine.UI;
 
 public class DisplayInventory : MonoBehaviour   // 不要弄成singleton
 {
-    [SerializeField]
-    private List<GameObject> slots = new List<GameObject>();
+    [SerializeField] private List<GameObject> slots = new List<GameObject>();
 
     private void Start()
     {

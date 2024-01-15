@@ -5,12 +5,9 @@ using UnityEngine.AI;
 
 public class Player : MonoBehaviour
 {
-    [HideInInspector]
-    public bool isSelected;     // 雙重認證
-
-    [SerializeField]
-    private GameObject body;
-    private NavMeshAgent agent;
+    
+    [SerializeField] private GameObject body;
+    public NavMeshAgent agent;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     
@@ -37,23 +34,24 @@ public class Player : MonoBehaviour
 
     public IEnumerator MoveThenExecute(GameObject target)
     {
-        
         agent.SetDestination(target.transform.position);
         
         yield return new WaitUntil(() => !agent.hasPath && !agent.pathPending);
 
-        isSelected = false;     // 雙重認證
         ExecuteClickedObject(target);
+        InputHandler.Instance.Deselect();
     }
     
     
     private void ExecuteClickedObject(GameObject target)
     {
+        Debug.Log("Execute On" + target.name);
+        
         switch (target.tag)
         {
             case "Item":
                 
-                if(inventory.CheckThenAddItem(displayInventory, target.GetComponent<Item>().item, 1))
+                if (inventory.CheckThenAddItem(displayInventory, target.GetComponent<Item>().item, 1))
                 {
                     Destroy(target);
                     InputHandler.Instance.indicatorGem.SetActive(false);

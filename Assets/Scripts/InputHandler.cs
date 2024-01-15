@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +6,13 @@ public class InputHandler : MonoBehaviour
 {
     public static InputHandler Instance { get; set; }
     
-    public GameObject indicatorGem;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private DisplayInventory displayInventory;
     
-    [HideInInspector]
-    public Player currentPlayer;
+    public GameObject indicatorGem;
+
+    private GameObject currentObject;
+    [HideInInspector] public Player currentPlayer;
     
     
     private void Awake()
@@ -35,64 +37,69 @@ public class InputHandler : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 clickPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             clickPosition.z = 0f;
             RaycastHit2D hit = Physics2D.Raycast(clickPosition, Vector2.zero);
 
             if (hit.collider)
             {
-                GameObject clickedObject = hit.collider.gameObject;
 
-                if (clickedObject.CompareTag("Player"))
+                if (hit.collider.gameObject == currentObject)
                 {
-                    SelectPlayer(clickedObject);
+                    Deselect();
                 }
-                else if (currentPlayer)     // 點到其他東西
+                else
                 {
-                    indicatorGem.SetActive(true);
+                    currentObject = hit.collider.gameObject;
                     
-                    Vector3 gemPosition = new Vector3(clickedObject.transform.position.x, clickedObject.transform.position.y + 0.65f, 0f);
-                    indicatorGem.transform.position = gemPosition;
-
-                    if (currentPlayer.isSelected)   // 雙重認證
+                    if (currentObject.CompareTag("Player"))
                     {
-                        StartCoroutine(currentPlayer.MoveThenExecute(clickedObject));
+                        
+                        SetIndicatorGemAbove(currentObject, 1.5f);
+                        currentPlayer = currentObject.GetComponent<Player>();
+                        displayInventory.UpdateDisplay(currentPlayer);
+                    }
+                    else      // 點到其他東西
+                    {
+                        SetIndicatorGemAbove(currentObject, 0.65f);
+
+                        if (currentPlayer)
+                        {
+                            StartCoroutine(currentPlayer.MoveThenExecute(currentObject));
+                        }
+                        
                     }
                 }
 
+            }
+            else if (currentObject)
+            {
+                if (currentPlayer)
+                {
+                    currentPlayer.agent.SetDestination(clickPosition);
+                }
+                
+                Deselect();
+                
             }
             
         }
     }
     
-    private void SelectPlayer(GameObject clickedObject)
+    private void SetIndicatorGemAbove(GameObject target, float yOffset)
     {
-        Player newPlayer = clickedObject.GetComponent<Player>();
-
-        if (currentPlayer == newPlayer)     // 取消選取
-        {
-            currentPlayer.isSelected = false;
-            indicatorGem.SetActive(false);
-            currentPlayer = null;
-        }
-        else    // 選取新的player
-        {
-            if (currentPlayer)  // 舊的player
-            {
-                currentPlayer.isSelected = false;
-            }
-
-            currentPlayer = newPlayer; // 切换当前玩家
-        
-            Debug.Log("Switched to " + currentPlayer.name);
-            currentPlayer.isSelected = true;
-        
-            Vector3 gemPosition = new Vector3(currentPlayer.transform.position.x, currentPlayer.transform.position.y + 1.5f, 0f);
-            indicatorGem.SetActive(true);
-            indicatorGem.transform.position = gemPosition;
-        
-            currentPlayer.displayInventory.UpdateDisplay(currentPlayer);
-        }
+        indicatorGem.SetActive(true);
+        Vector3 indicatorPosition = target.transform.position;
+        indicatorPosition.y += yOffset;
+        indicatorGem.transform.position = indicatorPosition;
     }
+
+    public void Deselect()
+    {
+        currentObject = null;
+        currentPlayer = null;
+        indicatorGem.SetActive(false);
+    }
+    
     
 }
