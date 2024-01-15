@@ -5,12 +5,14 @@ using UnityEngine.AI;
 
 public class Player : MonoBehaviour
 {
-    public GameObject selectionFrame;
-    public bool isSeleced;
+    [HideInInspector]
+    public bool isSelected;     // 雙重認證
 
-    public NavMeshAgent agent;
-    public Animator animator;
-    public SpriteRenderer spriteRenderer;
+    [SerializeField]
+    private GameObject body;
+    private NavMeshAgent agent;
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
     
     public InventoryObjects inventory;
     public DisplayInventory displayInventory;
@@ -18,20 +20,12 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        agent = GetComponent<NavMeshAgent>();
+        animator = body.GetComponent<Animator>();
+        spriteRenderer = body.GetComponent<SpriteRenderer>();
+        
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-        
-    }
-    
-    
-    void OnEnable()
-    {
-        InputHandler.OnObjectClick += OnObjectClicked;
-    }
-
-    void OnDisable()
-    {
-        InputHandler.OnObjectClick -= OnObjectClicked;
     }
     
 
@@ -39,27 +33,17 @@ public class Player : MonoBehaviour
     {
         PlayAnimation();
     }
-    
 
-    private void OnObjectClicked(GameObject clickedObject)
+
+    public IEnumerator MoveThenExecute(GameObject target)
     {
-        if (PlayerManager.Instance.currentPlayer == this && isSeleced)
-        {
-            Debug.Log("Execute on " + clickedObject.name);
-            StartCoroutine(MoveThenExecute(clickedObject));
-        }
-    }
-
-
-    private IEnumerator MoveThenExecute(GameObject target)
-    {
-        selectionFrame.SetActive(false);
+        
         agent.SetDestination(target.transform.position);
         
         yield return new WaitUntil(() => !agent.hasPath && !agent.pathPending);
 
+        isSelected = false;     // 雙重認證
         ExecuteClickedObject(target);
-        PlayerManager.Instance.currentPlayer = null;
     }
     
     
@@ -69,18 +53,18 @@ public class Player : MonoBehaviour
         {
             case "Item":
                 
-                inventory.AddItem(displayInventory, target.GetComponent<Item>().item, 1);
-                
-                if (!inventory.isFull)
+                if(inventory.CheckThenAddItem(displayInventory, target.GetComponent<Item>().item, 1))
                 {
                     Destroy(target);
+                    InputHandler.Instance.indicatorGem.SetActive(false);
                 }
-                
-                if (PlayerManager.Instance.currentPlayer == this)
+
+                if (InputHandler.Instance.currentPlayer == this)
                 {
                     displayInventory.UpdateDisplay(this);
                 }
                 break;
+            
         }
     }
 

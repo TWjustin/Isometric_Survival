@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DisplayInventory : MonoBehaviour
+public class DisplayInventory : MonoBehaviour   // 不要弄成singleton
 {
-    
-    public List<GameObject> slots = new List<GameObject>();
+    [SerializeField]
+    private List<GameObject> slots = new List<GameObject>();
 
     private void Start()
     {
@@ -23,7 +23,6 @@ public class DisplayInventory : MonoBehaviour
 
     public void UpdateDisplay(Player currentPlayer)
     {
-        // 在这里执行接收到事件时的逻辑
         ClearSlots();
         
         List<InventorySlot> container = currentPlayer.inventory.container;
