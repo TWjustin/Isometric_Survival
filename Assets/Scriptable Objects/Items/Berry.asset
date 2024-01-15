@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36c9fd07cd8b8cc41b31f732a7db4dc8, type: 3}
   m_Name: Berry
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: "\u8393\u679C"
   itemImage: {fileID: 21300000, guid: e8e2bdcd7ec12c74cb95cb1a348c6a00, type: 3}
   type: 0
   description: 

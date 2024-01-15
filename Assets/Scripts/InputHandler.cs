@@ -12,8 +12,6 @@ public class InputHandler : MonoBehaviour
     [HideInInspector]
     public Player currentPlayer;
     
-    // [SerializeField]
-    // private DisplayInventory playerInventory;
     
     private void Awake()
     {
@@ -49,7 +47,7 @@ public class InputHandler : MonoBehaviour
                 {
                     SelectPlayer(clickedObject);
                 }
-                else if (currentPlayer)
+                else if (currentPlayer)     // 點到其他東西
                 {
                     indicatorGem.SetActive(true);
                     

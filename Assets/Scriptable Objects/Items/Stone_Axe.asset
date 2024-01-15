@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f7096cef9a96674e969cedb7e211244, type: 3}
   m_Name: Stone_Axe
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: "\u77F3\u65A7"
   itemImage: {fileID: 21300000, guid: 3e06380ab4593c34386f980818b9a5cb, type: 3}
   type: 1
   description: 

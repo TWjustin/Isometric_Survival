@@ -43,12 +43,9 @@ TagManager:
   - name: Background
     uniqueID: 2237957503
     locked: 0
-  - name: OnGround
+  - name: Walkable
     uniqueID: 614881371
     locked: 0
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Objects
-    uniqueID: 962504855
     locked: 0
