@@ -7,17 +7,16 @@ public class InputHandler : MonoBehaviour
     public static InputHandler Instance { get; set; }
     
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private DisplayInventory displayInventory;
+    [SerializeField] private InventoryPanel inventoryPanel;
     
     public GameObject indicatorGem;
 
-    private GameObject currentObject;
     
-    [Header("不可編輯")]
+    [Header("Do not Edit")]
+    [SerializeField] private GameObject currentObject;
     public Player currentPlayer;
-    public TimedEventResource currentTimedEventObject;
-    
-    
+
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -49,7 +48,7 @@ public class InputHandler : MonoBehaviour
 
                 if (hit.collider.gameObject == currentObject)
                 {
-                    TimedEventManager.Instance.CloseWindow();
+                    
                     Deselect();
                 }
                 else
@@ -60,25 +59,21 @@ public class InputHandler : MonoBehaviour
                     {
                         
                         currentPlayer = currentObject.GetComponent<Player>();
-                        displayInventory.UpdateDisplay(currentPlayer);
+                        inventoryPanel.UpdateDisplay(currentPlayer);
                         
                         
                         SetIndicatorGemAbove(currentObject, 1.5f);
+                        
                     }
                     else      // 點到其他東西
                     {
-                        currentTimedEventObject = currentObject.GetComponent<TimedEventResource>();
-                        TimedEventManager.Instance.currentTimedEvent = currentTimedEventObject;
+                        
                         SetIndicatorGemAbove(currentObject, 0.65f);
                         
 
-                        if (currentTimedEventObject.inProgress)
+                        if (currentPlayer)
                         {
-                            TimedEventManager.Instance.OpenWindowAndSetPosition(currentPlayer);
-                        }
-                        else if (currentPlayer)
-                        {
-                            StartCoroutine(currentPlayer.MoveThenExecute(currentObject));
+                            StartCoroutine(currentPlayer.MoveThenExecute(currentObject));   // coroutine
                         }
                     }
                 }
@@ -91,7 +86,7 @@ public class InputHandler : MonoBehaviour
                     currentPlayer.agent.SetDestination(clickPosition);
                 }
                 
-                TimedEventManager.Instance.CloseWindow();
+
                 Deselect();
                 
             }

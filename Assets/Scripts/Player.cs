@@ -12,7 +12,9 @@ public class Player : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     
     public InventoryObjects inventory;
-    public DisplayInventory displayInventory;
+    public InventoryPanel inventoryPanel;
+    
+    public bool inProgress = false;
 
 
     private void Start()
@@ -39,7 +41,7 @@ public class Player : MonoBehaviour
         ExecuteClickedObject(target);
         
         // 結束執行
-        InputHandler.Instance.Deselect();   // 不要TimedEventManager.Instance.CloseWindow();
+        InputHandler.Instance.Deselect();
     }
     
     
@@ -53,16 +55,17 @@ public class Player : MonoBehaviour
                 
                 Item itemScript = target.GetComponent<Item>();
                 
-                if (inventory.CheckSlotAvailable(displayInventory, itemScript.item))
+                if (inventory.CheckSlotAvailable(itemScript.item))
                 {
-                    inventory.AddItemToInventory(displayInventory, itemScript.item, 1);
                     Destroy(target);
+                    inventory.AddItemToInventory(itemScript.item, 1);
+                    
+                    if (InputHandler.Instance.currentPlayer == this)
+                    {
+                        inventoryPanel.UpdateDisplay(this);
+                    }
                 }
 
-                if (InputHandler.Instance.currentPlayer == this)    // 不要用else if，跟上面是分開的
-                {
-                    displayInventory.UpdateDisplay(this);
-                }
                 break;
             
             
@@ -70,14 +73,11 @@ public class Player : MonoBehaviour
 
                 TimedEventResource resourceScript = target.GetComponent<TimedEventResource>();
                 
-                if (inventory.CheckSlotAvailable(displayInventory, resourceScript.dropItemResult))
+                if (inventory.CheckSlotAvailable(resourceScript.dropItemResult))
                 {
+                    target.GetComponent<TimedEventResource>().actingPlayer = this;
+                    resourceScript.InstantiateCanvas();     // coroutine
                     
-                    TimedEventManager.Instance.OpenWindowAndSetPosition(this);
-                    resourceScript.StartTimer(); // coroutine
-                    
-                    inventory.AddItemToInventory(displayInventory, resourceScript.dropItemResult, resourceScript.dropAmount);
-                    displayInventory.UpdateDisplay(this);
                 }
 
                 break;

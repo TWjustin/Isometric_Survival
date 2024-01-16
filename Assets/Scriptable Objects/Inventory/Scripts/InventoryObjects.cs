@@ -8,13 +8,12 @@ public class InventoryObjects : ScriptableObject
 {
     public List<InventorySlot> container = new List<InventorySlot>();
 
-    private int maxContainerSize;
+    [SerializeField] private int maxContainerSize;
     private InventorySlot existingSlot;
     
     
-    public bool CheckSlotAvailable(DisplayInventory inventoryPanel, ItemObject _item)
+    public bool CheckSlotAvailable(ItemObject _item)
     {
-        maxContainerSize = inventoryPanel.transform.childCount;
         existingSlot = container.Find(slotInfo => slotInfo.item == _item);
 
         if (existingSlot != null)
@@ -32,7 +31,7 @@ public class InventoryObjects : ScriptableObject
         }
     }
     
-    public void AddItemToInventory(DisplayInventory inventoryPanel, ItemObject _item, int _amount)
+    public void AddItemToInventory(ItemObject _item, int _amount)
     {
 
         if (existingSlot != null)

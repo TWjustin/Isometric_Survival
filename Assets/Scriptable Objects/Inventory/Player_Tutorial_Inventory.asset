@@ -15,4 +15,10 @@ MonoBehaviour:
   container:
   - item: {fileID: 11400000, guid: bc07bf8113496464d80571452b35ec7f, type: 2}
     amount: 1
-  isFull: 0
+  - item: {fileID: 11400000, guid: 077e76017738398449ff00285dc884bf, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 93d8395c41b84b44e8cc9d8d4db70a59, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: afa2a9017ce0cf94d905892f9f5e8ac1, type: 2}
+    amount: 2
+  maxContainerSize: 4

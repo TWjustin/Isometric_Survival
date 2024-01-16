@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DisplayInventory : MonoBehaviour   // 不要弄成singleton
+public class InventoryPanel : MonoBehaviour   // 不要弄成singleton
 {
     [SerializeField] private List<GameObject> slots = new List<GameObject>();
 
