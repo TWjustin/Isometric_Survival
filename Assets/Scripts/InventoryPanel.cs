@@ -6,7 +6,7 @@ public class InventoryPanel : MonoBehaviour   // 不要弄成singleton
 {
     [SerializeField] private List<GameObject> slots = new List<GameObject>();
 
-    private void Start()
+    private void Awake()
     {
         ClearSlots();
     }

@@ -1,19 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InputHandler : MonoBehaviour
 {
     public static InputHandler Instance { get; set; }
     
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private InventoryPanel inventoryPanel;
+    [SerializeField] private InventoryPanel inventoryPanelScript;
     
     public GameObject indicatorGem;
+    [HideInInspector] public GameObject playerInfoPanel;
 
     
     [Header("Do not Edit")]
-    [SerializeField] private GameObject currentObject;
+    [SerializeField] private GameObject currentObject;  // 不用去掉
     public Player currentPlayer;
 
 
@@ -32,11 +34,19 @@ public class InputHandler : MonoBehaviour
     private void Start()
     {
         indicatorGem.SetActive(false);
+        playerInfoPanel.SetActive(false);
     }
 
 
     void Update()
     {
+        // 检测是否有点击事件发生在 UI 上
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            // UI 上的点击，不执行后面的逻辑
+            return;
+        }
+        
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 clickPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -45,49 +55,73 @@ public class InputHandler : MonoBehaviour
 
             if (hit.collider)
             {
+                GameObject clickedObject = hit.collider.gameObject;
+                
+                
 
-                if (hit.collider.gameObject == currentObject)
+                if (clickedObject == currentObject)
                 {
-                    
-                    Deselect();
+                    // Deselect
+                    indicatorGem.SetActive(false);
+                    playerInfoPanel.SetActive(false);
+                    currentObject = null;
+                    currentPlayer = null;   // 目前OK
                 }
                 else
                 {
-                    currentObject = hit.collider.gameObject;
+                    currentObject = clickedObject;
                     
-                    if (currentObject.CompareTag("Player"))  // 本來選其他object或選到東西
+                    if (clickedObject.CompareTag("Player"))  // 本來選其他object或選到東西
                     {
+
+                        currentPlayer =  clickedObject.GetComponent<Player>();
+                        playerInfoPanel.SetActive(true);
+                        inventoryPanelScript.UpdateDisplay(currentPlayer);
                         
-                        currentPlayer = currentObject.GetComponent<Player>();
-                        inventoryPanel.UpdateDisplay(currentPlayer);
                         
                         
-                        SetIndicatorGemAbove(currentObject, 1.5f);
+                        SetIndicatorGemAbove(clickedObject, 1.5f);
                         
                     }
                     else      // 點到其他東西
                     {
                         
-                        SetIndicatorGemAbove(currentObject, 0.65f);
+                        SetIndicatorGemAbove(clickedObject, 0.65f);
                         
 
                         if (currentPlayer)
                         {
-                            StartCoroutine(currentPlayer.MoveThenExecute(currentObject));   // coroutine
+                            if (!currentPlayer.inProgress)
+                            {
+                                StartCoroutine(currentPlayer.MoveThenExecute(clickedObject));   // coroutine
+                            }
+                            else
+                            {
+                                Debug.Log("This player is busy");
+                            }
+                            
+                            
                         }
                     }
                 }
 
             }
-            else if (currentObject)     // 點到空白處則取消選取
+            else     // 點到空白處則取消選取
             {
                 if (currentPlayer)
                 {
-                    currentPlayer.agent.SetDestination(clickPosition);
+                    if (!currentPlayer.inProgress)
+                    {
+                        currentPlayer.agent.SetDestination(clickPosition);
+                    }
+                    
                 }
                 
-
-                Deselect();
+                // Deselect
+                indicatorGem.SetActive(false);
+                playerInfoPanel.SetActive(false);
+                currentObject = null;
+                currentPlayer = null;
                 
             }
             
@@ -102,12 +136,5 @@ public class InputHandler : MonoBehaviour
         indicatorGem.transform.position = indicatorPosition;
     }
 
-    public void Deselect()
-    {
-        indicatorGem.SetActive(false);
-        currentObject = null;
-        currentPlayer = null;
-    }
-    
-    
+
 }

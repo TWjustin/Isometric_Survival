@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public InventoryPanel inventoryPanel;
     
     public bool inProgress = false;
+    // public bool inProgress = false;
 
 
     private void Start()
@@ -26,22 +27,43 @@ public class Player : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
     }
+    
+    private void Update()
+    {
+        if (agent.hasPath && agent.remainingDistance > 0.1f)
+        {
+            animator.SetBool("IsWalking", true);
+            
+            Vector3 moveDirection = agent.velocity.normalized;
+            animator.SetFloat("yVelocity", moveDirection.y);
+            if (moveDirection.x > 0)
+            {
+                spriteRenderer.flipX = false;
+            }
+            else if (moveDirection.x < 0)
+            {
+                spriteRenderer.flipX = true;
+            }
+        }
+        else
+        {
+            animator.SetBool("IsWalking", false);
+        }
+    }
 
 
     public IEnumerator MoveThenExecute(GameObject target)
     {
         // 開始走
         agent.SetDestination(target.transform.position);
-        PlayWalkingAnimation();
+        
 
-        yield return new WaitUntil(() => !agent.hasPath && !agent.pathPending);
+        yield return new WaitUntil(() => !agent.hasPath && !agent.pathPending && agent.remainingDistance < 0.1f);
         
         // 開始執行
-        animator.SetBool("IsWalking", false);
+        InputHandler.Instance.indicatorGem.SetActive(false);
         ExecuteClickedObject(target);
         
-        // 結束執行
-        InputHandler.Instance.Deselect();
     }
     
     
@@ -53,12 +75,12 @@ public class Player : MonoBehaviour
         {
             case "Item":
                 
-                Item itemScript = target.GetComponent<Item>();
+                Drops dropsScript = target.GetComponent<Drops>();
                 
-                if (inventory.CheckSlotAvailable(itemScript.item))
+                if (inventory.CheckSlotAvailable(dropsScript.item))
                 {
                     Destroy(target);
-                    inventory.AddItemToInventory(itemScript.item, 1);
+                    inventory.AddItemToInventory(dropsScript.item, 1);
                     
                     if (InputHandler.Instance.currentPlayer == this)
                     {
@@ -76,30 +98,26 @@ public class Player : MonoBehaviour
                 if (inventory.CheckSlotAvailable(resourceScript.dropItemResult))
                 {
                     target.GetComponent<TimedEventResource>().actingPlayer = this;
-                    resourceScript.InstantiateCanvas();     // coroutine
+                    inProgress = true;
+                    resourceScript.InstantiateCanvas();     // canvas coroutine
                     
                 }
 
                 break;
         }
     }
-    
 
-    private void PlayWalkingAnimation()
+    public void Harvest(TimedEventResource resource)
     {
-        animator.SetBool("IsWalking", true);
-            
-        Vector3 moveDirection = agent.velocity.normalized;
-        animator.SetFloat("yVelocity", moveDirection.y);
-        if (moveDirection.x > 0)
+        inventory.AddItemToInventory(resource.dropItemResult, resource.dropAmount);
+        
+        if (InputHandler.Instance.currentPlayer == this)
         {
-            spriteRenderer.flipX = false;
-        }
-        else if (moveDirection.x < 0)
-        {
-            spriteRenderer.flipX = true;
+            inventoryPanel.UpdateDisplay(this);
         }
     }
+    
+    
 
 
     // private void OnApplicationQuit()    // 暫時

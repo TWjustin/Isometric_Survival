@@ -128,7 +128,6 @@ MonoBehaviour:
   dropAmount: 2
   hours: 0
   minutes: 0
-  seconds: 5
+  seconds: 30
   windowCanvasPrefab: {fileID: 8782643962756989015, guid: 7431e589a05c4ac4ea802e15f23408af, type: 3}
-  inProgress: 0
   actingPlayer: {fileID: 0}

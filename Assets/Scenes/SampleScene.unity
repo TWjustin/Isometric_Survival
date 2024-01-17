@@ -2271,11 +2271,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 519420031}
-  inventoryPanel: {fileID: 1338691538}
+  inventoryPanelScript: {fileID: 1338691538}
   indicatorGem: {fileID: 1376547946}
+  playerInfoPanel: {fileID: 928275136}
   currentObject: {fileID: 0}
   currentPlayer: {fileID: 0}
-  currentTimedEventObject: {fileID: 0}
 --- !u!4 &647297902
 Transform:
   m_ObjectHideFlags: 0

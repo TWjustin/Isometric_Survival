@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class TimedEventCanvas : MonoBehaviour
 {
     private TimedEventResource resource;
-    [SerializeField] private InventoryPanel inventoryPanel;
+    
 
     // 時間
     private DateTime startTime;
@@ -20,17 +20,22 @@ public class TimedEventCanvas : MonoBehaviour
     // UI
     public Text timeLeftText;
     public Slider timeLeftSlider;
+    public Button cancelButton;
     public Button skipButton;
-    public Button harvestButton;
+    public Button doneButton;
 
     
-    public void Initialize()
+    private void OnEnable()
     {
+        Debug.Log("OnEnable");
+        
         resource = transform.parent.GetComponent<TimedEventResource>();
         
-        harvestButton.onClick.AddListener(resource.DoneOrHarvest);
+        cancelButton.onClick.AddListener(Cancel);
+        doneButton.onClick.AddListener(DoneButton);
         skipButton.onClick.AddListener(Skip);
-        harvestButton.gameObject.SetActive(false);
+        cancelButton.gameObject.SetActive(true);
+        doneButton.gameObject.SetActive(false);
         skipButton.gameObject.SetActive(true);
         
 
@@ -40,11 +45,9 @@ public class TimedEventCanvas : MonoBehaviour
         totalSeconds = (float) totalTime.TotalSeconds;
         
         
-        timerCoroutine = StartCoroutine(Timer());
+        timerCoroutine = StartCoroutine(Timer());   // coroutine
     }
     
-    
-
     private IEnumerator Timer()
     {
         TimeSpan timeLeft = endTime - DateTime.Now;
@@ -84,7 +87,7 @@ public class TimedEventCanvas : MonoBehaviour
             else
             {
                 
-                EndAction();
+                HandleTimesUpUI();
                 break;
             }
         }
@@ -92,26 +95,44 @@ public class TimedEventCanvas : MonoBehaviour
         yield return null;
     }
 
+    
+    
+    private void Cancel()
+    {
+        StopCoroutine(timerCoroutine);
+        
+        resource.actingPlayer.inProgress = false;
+        InputHandler.Instance.currentPlayer = null;
+        
+        Destroy(this.gameObject);
+        
+    }
+
 
     private void Skip()
     {
         StopCoroutine(timerCoroutine);
         
-        EndAction();
+        HandleTimesUpUI();
         
-        resource.actingPlayer.inventory.AddItemToInventory(resource.dropItemResult, resource.dropAmount);
-        if (resource.actingPlayer == InputHandler.Instance.currentPlayer)
-        {
-            inventoryPanel.UpdateDisplay(resource.actingPlayer);
-        }
     }
-
-    private void EndAction()
+    
+    
+    private void DoneButton()
+    {
+        resource.actingPlayer.inProgress = false;
+        resource.actingPlayer.Harvest(resource);
+        InputHandler.Instance.currentPlayer = null;
+        
+        Destroy(this.gameObject);
+    }
+    
+    private void HandleTimesUpUI()
     {
         timeLeftText.text = "Finished";
         timeLeftSlider.value = 1;
-        
+        cancelButton.gameObject.SetActive(false);
         skipButton.gameObject.SetActive(false);
-        harvestButton.gameObject.SetActive(true);
+        doneButton.gameObject.SetActive(true);
     }
 }
