@@ -96,7 +96,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.3132853}
@@ -128,6 +128,8 @@ MonoBehaviour:
   dropAmount: 2
   hours: 0
   minutes: 0
-  seconds: 30
-  windowCanvasPrefab: {fileID: 8782643962756989015, guid: 7431e589a05c4ac4ea802e15f23408af, type: 3}
-  actingPlayer: {fileID: 0}
+  seconds: 4
+  dropItemsPossibility:
+  - item: {fileID: 0}
+    minAmount: 0
+    maxAmount: 0

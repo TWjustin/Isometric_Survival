@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class TimedEventCanvas : MonoBehaviour
 {
-    private TimedEventResource resource;
+    private Player player;
+    [HideInInspector] public TimedEventResource resource;
+    
     
 
     // 時間
@@ -18,19 +20,19 @@ public class TimedEventCanvas : MonoBehaviour
     private Coroutine timerCoroutine;
     
     // UI
-    public Text timeLeftText;
-    public Slider timeLeftSlider;
-    public Button cancelButton;
-    public Button skipButton;
-    public Button doneButton;
+    [SerializeField] private Text timeLeftText;
+    [SerializeField] private Slider timeLeftSlider;
+    [SerializeField] private Button cancelButton;
+    [SerializeField] private Button skipButton;
+    [SerializeField] private Button doneButton;
 
     
-    private void OnEnable()
+    
+    public void Initialize()
     {
-        Debug.Log("OnEnable");
-        
-        resource = transform.parent.GetComponent<TimedEventResource>();
-        
+        player = transform.parent.GetComponent<Player>();
+
+
         cancelButton.onClick.AddListener(Cancel);
         doneButton.onClick.AddListener(DoneButton);
         skipButton.onClick.AddListener(Skip);
@@ -101,10 +103,10 @@ public class TimedEventCanvas : MonoBehaviour
     {
         StopCoroutine(timerCoroutine);
         
-        resource.actingPlayer.inProgress = false;
+        player.inProgress = false;
         InputHandler.Instance.currentPlayer = null;
         
-        Destroy(this.gameObject);
+        Destroy(gameObject);
         
     }
 
@@ -120,13 +122,18 @@ public class TimedEventCanvas : MonoBehaviour
     
     private void DoneButton()
     {
-        resource.actingPlayer.inProgress = false;
-        resource.actingPlayer.Harvest(resource);
-        InputHandler.Instance.currentPlayer = null;
+
+        player.GetReward();
         
-        Destroy(this.gameObject);
+        StartCoroutine(ObjectUIManager.Instance.SpawnPopup(player));
+        
+        
+        Destroy(gameObject);
     }
+
     
+    
+
     private void HandleTimesUpUI()
     {
         timeLeftText.text = "Finished";

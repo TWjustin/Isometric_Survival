@@ -9,44 +9,57 @@ public class InventoryObjects : ScriptableObject
     public List<InventorySlot> container = new List<InventorySlot>();
 
     [SerializeField] private int maxContainerSize;
-    private InventorySlot existingSlot;
     
     
-    public bool CheckSlotAvailable(ItemObject _item)
+    public bool CheckSlotAvailable(List<DropItem> itemList)
     {
-        existingSlot = container.Find(slotInfo => slotInfo.item == _item);
+        //
+        int neededSlotLeft = itemList.Count;
+        Debug.Log("Total item count: " + neededSlotLeft);
+        
+        for (int i = 0; i < itemList.Count; i++)
+        {
+            if (container.Find(slotInfo => slotInfo.item == itemList[i].item) != null)
+            {
+                neededSlotLeft--;
+            }
+            else if (container.Count < maxContainerSize)
+            {
+                neededSlotLeft--;
+            }
 
-        if (existingSlot != null)
-        {
-            return true;
+            if (neededSlotLeft == 0)
+            {
+                return true;
+            }
         }
-        else if (container.Count < maxContainerSize)
-        {
-            return true;
-        }
-        else
-        {
-            Debug.Log("Inventory is full");
-            return false;
-        }
+
+        Debug.Log("Needed slot left: " + neededSlotLeft);
+        return false;
+        
     }
     
-    public void AddItemToInventory(ItemObject _item, int _amount)
+    public void AddItemToInventory(List<DropItem> itemList)
     {
-
-        if (existingSlot != null)
+        for (int i = 0; i < itemList.Count; i++)
         {
-            existingSlot.AddAmount(_amount);
-
+            InventorySlot existSlot = container.Find(slotInfo => slotInfo.item == itemList[i].item);
+            
+            if (existSlot != null)
+            {
+                existSlot.AddAmount(itemList[i].amount);
+            }
+            else if (container.Count < maxContainerSize)
+            {
+                InventorySlot emptySlot = new InventorySlot();
+                emptySlot.item = itemList[i].item;
+                emptySlot.AddAmount(itemList[i].amount);
+                container.Add(emptySlot);
+            }
+            
+            
         }
-        else if (container.Count < maxContainerSize)
-        {
-            InventorySlot emptySlot = new InventorySlot();
-
-            emptySlot.item = _item;
-            emptySlot.AddAmount(_amount);
-            container.Add(emptySlot);
-        }
+        
         
     }
 }

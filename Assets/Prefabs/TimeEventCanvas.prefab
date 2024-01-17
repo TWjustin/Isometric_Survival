@@ -689,7 +689,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &8782643962756989014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -719,6 +719,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b5fb172b86cfb44783e948e697ed06c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemAddedPopupPrefab: {fileID: 1193862106842688366, guid: 7896f8f6bf69c5c41ac8c5a0c831f99a, type: 3}
   timeLeftText: {fileID: 8782643963271628581}
   timeLeftSlider: {fileID: 8782643962379626957}
   cancelButton: {fileID: 6263205638167186797}

@@ -2,8 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Drops : MonoBehaviour
+public class ItemToPickUp : MonoBehaviour
 {
     public ItemObject item;
+
+    
+    
 
 }

@@ -15,7 +15,9 @@ public class Player : MonoBehaviour
     public InventoryPanel inventoryPanel;
     
     public bool inProgress = false;
-    // public bool inProgress = false;
+    [HideInInspector] public TimedEventResource actingObject;
+    [HideInInspector] public List<DropItem> actionReward;
+    
 
 
     private void Start()
@@ -54,6 +56,8 @@ public class Player : MonoBehaviour
 
     public IEnumerator MoveThenExecute(GameObject target)
     {
+        
+        
         // 開始走
         agent.SetDestination(target.transform.position);
         
@@ -70,17 +74,21 @@ public class Player : MonoBehaviour
     private void ExecuteClickedObject(GameObject target)    // 已經移動完
     {
         Debug.Log("Execute On" + target.name);
-        
+
         switch (target.tag)
         {
             case "Item":
                 
-                Drops dropsScript = target.GetComponent<Drops>();
+                ItemToPickUp itemScript = target.GetComponent<ItemToPickUp>();
                 
-                if (inventory.CheckSlotAvailable(dropsScript.item))
+                DropItem dropItem = new DropItem(itemScript.item, 1);   // 精簡化
+                List<DropItem> dropItemList = new List<DropItem>();
+                dropItemList.Add(dropItem);
+                
+                if (inventory.CheckSlotAvailable(dropItemList))
                 {
                     Destroy(target);
-                    inventory.AddItemToInventory(dropsScript.item, 1);
+                    inventory.AddItemToInventory(dropItemList);
                     
                     if (InputHandler.Instance.currentPlayer == this)
                     {
@@ -93,13 +101,14 @@ public class Player : MonoBehaviour
             
             case "Resource":
 
+                actingObject = target.GetComponent<TimedEventResource>();
                 TimedEventResource resourceScript = target.GetComponent<TimedEventResource>();
                 
-                if (inventory.CheckSlotAvailable(resourceScript.dropItemResult))
+                actionReward = resourceScript.CalculateDropItems();
+                if (inventory.CheckSlotAvailable(actionReward))
                 {
-                    target.GetComponent<TimedEventResource>().actingPlayer = this;
                     inProgress = true;
-                    resourceScript.InstantiateCanvas();     // canvas coroutine
+                    ObjectUIManager.Instance.SpawnCanvas(this);     // canvas的coroutine
                     
                 }
 
@@ -107,14 +116,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Harvest(TimedEventResource resource)
+    public void GetReward()
     {
-        inventory.AddItemToInventory(resource.dropItemResult, resource.dropAmount);
+        inProgress = false;
+        actingObject = null;
+        
+        inventory.AddItemToInventory(actionReward);
         
         if (InputHandler.Instance.currentPlayer == this)
         {
             inventoryPanel.UpdateDisplay(this);
         }
+        
+        InputHandler.Instance.currentPlayer = null;     // 防止他繼續行動
     }
     
     
