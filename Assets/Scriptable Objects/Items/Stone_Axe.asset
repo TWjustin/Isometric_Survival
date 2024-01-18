@@ -17,5 +17,5 @@ MonoBehaviour:
   type: 1
   description: 
   toolType: 0
-  strength: 0
+  strength: 2
   durability: 60

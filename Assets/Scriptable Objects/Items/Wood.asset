@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7096cef9a96674e969cedb7e211244, type: 3}
-  m_Name: Iron_Axe
+  m_Script: {fileID: 11500000, guid: e2f82e11a5754a44e9ee55676664634b, type: 3}
+  m_Name: Wood
   m_EditorClassIdentifier: 
-  itemName: "\u9435\u65A7"
-  itemImage: {fileID: 21300000, guid: bf1576b7f34aca34194bc6a502929ba1, type: 3}
-  type: 1
+  itemName: "\u6728\u6750"
+  itemImage: {fileID: 21300000, guid: c698086919d1cd54ca700b29e7f71407, type: 3}
+  type: 2
   description: 
-  toolType: 0
-  strength: 3
-  durability: 130

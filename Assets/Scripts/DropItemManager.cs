@@ -26,7 +26,7 @@ public class DropItemData
             }
             
         }
-        Debug.Log("Drop item count: " + result.Count);
+        
 
         return result;
     }

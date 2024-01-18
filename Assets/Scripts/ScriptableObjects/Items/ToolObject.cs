@@ -18,12 +18,12 @@ public enum ToolType
 public class ToolObject : ItemObject
 {
     public ToolType toolType;
-    public int strength;  // 強度
+    public int strength;  // 強度，單次使用造成的傷害
     public int durability;  // 耐久度，使用一次減一
     
     public void Awake()
     {
         type = ItemType.Tool;
-        toolType = ToolType.Default;
+        
     }
 }

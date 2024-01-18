@@ -57,10 +57,10 @@ public class ObjectUIManager : MonoBehaviour
     }
     
     
-    public void SpawnHealthBar(GameObject target)
+    public GameObject SpawnHealthBar(Transform target)
     {
-        GameObject healthBarCanvas = Instantiate(healthBarCanvasPrefab, target.transform, false);
-        
+        GameObject healthBarCanvas = Instantiate(healthBarCanvasPrefab, target, false);
+        return healthBarCanvas;
     }
     
 }

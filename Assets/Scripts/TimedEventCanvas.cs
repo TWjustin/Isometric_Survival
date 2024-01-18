@@ -125,8 +125,6 @@ public class TimedEventCanvas : MonoBehaviour
         player.GetReward();
 
         
-        
-        
         Destroy(gameObject);
     }
 

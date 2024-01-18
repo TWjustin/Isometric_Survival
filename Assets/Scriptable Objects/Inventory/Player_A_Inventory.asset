@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   container:
   - item: {fileID: 11400000, guid: afa2a9017ce0cf94d905892f9f5e8ac1, type: 2}
-    amount: 9
+    amount: 16
   - item: {fileID: 11400000, guid: 5d0d07bae9d93be458d8c7cf604d1359, type: 2}
     amount: 1
   - item: {fileID: 11400000, guid: 077e76017738398449ff00285dc884bf, type: 2}
-    amount: 1
-  - item: {fileID: 11400000, guid: 22b2d1145dc1ab849877462564e784be, type: 2}
     amount: 1
   maxContainerSize: 4

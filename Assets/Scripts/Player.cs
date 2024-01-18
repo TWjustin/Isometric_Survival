@@ -28,8 +28,8 @@ public class Player : MonoBehaviour
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = transform.GetChild(0).GetComponent<Animator>();
+        spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -88,18 +88,14 @@ public class Player : MonoBehaviour
                 ItemToPickUp itemScript = target.GetComponent<ItemToPickUp>();
                 
                 DropItem dropItem = new DropItem(itemScript.item, 1);
-                actionReward.Clear();
+                actionReward = new List<DropItem>();
                 actionReward.Add(dropItem);
                 
                 if (inventory.CheckSlotAvailable(actionReward))
                 {
-                    Destroy(target);
-                    inventory.AddItemToInventory(actionReward);
+                    GetReward();
                     
-                    if (InputHandler.Instance.currentPlayer == this)
-                    {
-                        inventoryPanel.UpdateDisplay(this);
-                    }
+                    Destroy(target);
                 }
 
                 break;
@@ -127,28 +123,26 @@ public class Player : MonoBehaviour
 
                 if (tool && tool.toolType == damageBasedResource.toolNeeded)
                 {
-                    actingObject = target;
+                    
                     actionReward = DropItemData.CalculateDropItems(damageBasedResource);
                 
                 
                     if (inventory.CheckSlotAvailable(actionReward))
                     {
+                        actingObject = target;
+                        
                         inProgress = true;
-                        ObjectUIManager.Instance.SpawnHealthBar(actingObject);
-
+                        
+                        
+                        GameObject healthBarCanvas = ObjectUIManager.Instance.SpawnHealthBar(actingObject.transform);
+                        HealthBar healthBar = healthBarCanvas.transform.GetChild(0).GetComponent<HealthBar>();
+                        
                         animator.SetBool("IsUsingTool", true);
-                        AnimationClip clip = animator.GetCurrentAnimatorClipInfo(0)[0].clip;
-                        float clipLength = clip.length;
-
-                        int damage = tool.strength;
-                    
-                        while (damageBasedResource.currentHealth > 0)
-                        {
-                            StartCoroutine(TakeDamage(damageBasedResource, clipLength, damage));
-                        }
-                    
-                        Destroy(damageBasedResource.gameObject);
-                        animator.SetBool("IsUsingTool", false);
+                        healthBar.SetMaxHealth(damageBasedResource.maxHealth);
+                        
+                        
+                        StartCoroutine(TakeDamage(damageBasedResource, healthBar, tool));
+                        
                     }
                 }
                 
@@ -158,11 +152,22 @@ public class Player : MonoBehaviour
     }
     
     
-    private IEnumerator TakeDamage(DamageBasedResource resource, float clipLength, int damage)
+    private IEnumerator TakeDamage(DamageBasedResource resource,HealthBar healthBar, ToolObject tool)
     {
-        yield return new WaitForSeconds(clipLength);
+        while (resource.currentHealth > 0)
+        {
+            yield return new WaitForSeconds(1f);
         
-        resource.currentHealth -= damage;
+            resource.currentHealth -= tool.strength;
+            healthBar.SetHealth(resource.currentHealth);
+            
+            // 減少工具耐久
+        }
+        
+        animator.SetBool("IsUsingTool", false);
+        
+        GetReward();
+        Destroy(resource.gameObject);
     }
     
     
