@@ -8,6 +8,9 @@ public class ObjectUIManager : MonoBehaviour
 {
     public static ObjectUIManager Instance { get; set; }
     
+    
+    [SerializeField] private float waitTimeBase = 0.5f;
+    
     [SerializeField] private GameObject windowCanvasPrefab;
     [SerializeField] private GameObject itemAddedPopupPrefab;
 
@@ -33,17 +36,25 @@ public class ObjectUIManager : MonoBehaviour
         canvasScript.Initialize();
     }
     
-    public IEnumerator SpawnPopup(Player player)
+    
+    public void SpawnPopupInARow(Player player, List<DropItem> actionReward)
     {
-        List<DropItem> actionReward = player.actionReward;
-        
+
         for (int i = 0; i < actionReward.Count; i++)
         {
-            GameObject popup = Instantiate(itemAddedPopupPrefab, player.transform, false);
-            popup.GetComponentInChildren<Text>().text = "+" + actionReward[i].amount;
-            popup.GetComponentInChildren<Image>().sprite = actionReward[i].item.itemImage;
-            
-            yield return new WaitForSeconds(0.5f);
+            StartCoroutine(SpawnPopup(player.transform, actionReward[i], i * waitTimeBase));
         }
+        
     }
+
+    private IEnumerator SpawnPopup(Transform player, DropItem dropItem, float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        
+        GameObject popup = Instantiate(itemAddedPopupPrefab, player, false);
+        popup.GetComponentInChildren<Text>().text = "+" + dropItem.amount;
+        popup.GetComponentInChildren<Image>().sprite = dropItem.item.itemImage;
+    }
+    
+    
 }

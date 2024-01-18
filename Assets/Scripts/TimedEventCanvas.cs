@@ -124,8 +124,8 @@ public class TimedEventCanvas : MonoBehaviour
     {
 
         player.GetReward();
+
         
-        StartCoroutine(ObjectUIManager.Instance.SpawnPopup(player));
         
         
         Destroy(gameObject);

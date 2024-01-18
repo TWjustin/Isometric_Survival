@@ -4,42 +4,44 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
-public class InventoryObjects : ScriptableObject
+public class Inventory : ScriptableObject
 {
     public List<InventorySlot> container = new List<InventorySlot>();
 
     [SerializeField] private int maxContainerSize;
     
     
-    public bool CheckSlotAvailable(List<DropItem> itemList)
+    public bool CheckSlotAvailable(List<DropItem> itemList)     // 第一次數量不對
     {
-        //
-        int neededSlotLeft = itemList.Count;
-        Debug.Log("Total item count: " + neededSlotLeft);
         
+        int slotsHavingItem = container.Count;
+        
+
         for (int i = 0; i < itemList.Count; i++)
         {
             if (container.Find(slotInfo => slotInfo.item == itemList[i].item) != null)
             {
-                neededSlotLeft--;
+                Debug.Log("existingSlots++");
             }
-            else if (container.Count < maxContainerSize)
+            else if (slotsHavingItem < maxContainerSize)
             {
-                neededSlotLeft--;
+                slotsHavingItem++;
+                Debug.Log("slotsHavingItem++");
             }
-
-            if (neededSlotLeft == 0)
+            else
             {
-                return true;
+                Debug.Log("Inventory is full");
+                return false;
             }
+            
         }
-
-        Debug.Log("Needed slot left: " + neededSlotLeft);
-        return false;
+        
+        
+        return true;    // slotsHavingItem >= maxContainerSize
         
     }
     
-    public void AddItemToInventory(List<DropItem> itemList)
+    public void AddItemToInventory(List<DropItem> itemList) //
     {
         for (int i = 0; i < itemList.Count; i++)
         {

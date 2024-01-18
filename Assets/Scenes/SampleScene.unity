@@ -4050,6 +4050,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80fd30e48aea304ea354ebb8714cbe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waitTimeBase: 0.65
   windowCanvasPrefab: {fileID: 8782643962756989015, guid: 7431e589a05c4ac4ea802e15f23408af, type: 3}
   itemAddedPopupPrefab: {fileID: 1193862106842688366, guid: 7896f8f6bf69c5c41ac8c5a0c831f99a, type: 3}
 --- !u!1 &1175212544
@@ -4679,9 +4680,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1311581067}
+  - component: {fileID: 1311581064}
   - component: {fileID: 1311581066}
   - component: {fileID: 1311581065}
-  - component: {fileID: 1311581064}
   m_Layer: 0
   m_Name: TestResource
   m_TagString: Resource
@@ -4708,15 +4709,15 @@ MonoBehaviour:
   - item: {fileID: 11400000, guid: afa2a9017ce0cf94d905892f9f5e8ac1, type: 2}
     minAmount: 3
     maxAmount: 6
-  - item: {fileID: 11400000, guid: 077e76017738398449ff00285dc884bf, type: 2}
-    minAmount: 4
-    maxAmount: 7
-  - item: {fileID: 11400000, guid: 5d0d07bae9d93be458d8c7cf604d1359, type: 2}
-    minAmount: 1
-    maxAmount: 1
   - item: {fileID: 11400000, guid: 22b2d1145dc1ab849877462564e784be, type: 2}
-    minAmount: 9
-    maxAmount: 2
+    minAmount: 4
+    maxAmount: 9
+  - item: {fileID: 11400000, guid: 5d0d07bae9d93be458d8c7cf604d1359, type: 2}
+    minAmount: 4
+    maxAmount: 9
+  - item: {fileID: 11400000, guid: bc07bf8113496464d80571452b35ec7f, type: 2}
+    minAmount: 4
+    maxAmount: 9
 --- !u!61 &1311581065
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -11,12 +11,12 @@ public class Player : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     
-    public InventoryObjects inventory;
+    public Inventory inventory;
     public InventoryPanel inventoryPanel;
     
     public bool inProgress = false;
     [HideInInspector] public TimedEventResource actingObject;
-    [HideInInspector] public List<DropItem> actionReward;
+    private List<DropItem> actionReward;
     
 
 
@@ -81,14 +81,14 @@ public class Player : MonoBehaviour
                 
                 ItemToPickUp itemScript = target.GetComponent<ItemToPickUp>();
                 
-                DropItem dropItem = new DropItem(itemScript.item, 1);   // 精簡化
-                List<DropItem> dropItemList = new List<DropItem>();
-                dropItemList.Add(dropItem);
+                DropItem dropItem = new DropItem(itemScript.item, 1);
+                actionReward.Clear();
+                actionReward.Add(dropItem);
                 
-                if (inventory.CheckSlotAvailable(dropItemList))
+                if (inventory.CheckSlotAvailable(actionReward))
                 {
                     Destroy(target);
-                    inventory.AddItemToInventory(dropItemList);
+                    inventory.AddItemToInventory(actionReward);
                     
                     if (InputHandler.Instance.currentPlayer == this)
                     {
@@ -122,6 +122,7 @@ public class Player : MonoBehaviour
         actingObject = null;
         
         inventory.AddItemToInventory(actionReward);
+        ObjectUIManager.Instance.SpawnPopupInARow(this, actionReward);
         
         if (InputHandler.Instance.currentPlayer == this)
         {

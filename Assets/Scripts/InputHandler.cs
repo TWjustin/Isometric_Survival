@@ -15,7 +15,7 @@ public class InputHandler : MonoBehaviour
 
     
     [Header("Do not Edit")]
-    [SerializeField] private GameObject currentObject;  // 不用去掉
+    [SerializeField] private GameObject currentObject;
     public Player currentPlayer;
 
 
