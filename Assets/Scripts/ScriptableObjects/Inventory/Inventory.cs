@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Inventory", menuName = "Inventory System/Inventory")]
 public class Inventory : ScriptableObject
 {
-    public List<InventorySlot> container = new List<InventorySlot>();
+    public List<InventorySlotObject> container = new List<InventorySlotObject>();
 
     [SerializeField] private int maxContainerSize;
     
@@ -21,12 +21,11 @@ public class Inventory : ScriptableObject
         {
             if (container.Find(slotInfo => slotInfo.item == itemList[i].item) != null)
             {
-                Debug.Log("existingSlots++");
+                continue;
             }
             else if (slotsHavingItem < maxContainerSize)
             {
                 slotsHavingItem++;
-                Debug.Log("slotsHavingItem++");
             }
             else
             {
@@ -41,22 +40,22 @@ public class Inventory : ScriptableObject
         
     }
     
-    public void AddItemToInventory(List<DropItem> itemList) //
+    public void AddItemToInventory(List<DropItem> itemList)
     {
         for (int i = 0; i < itemList.Count; i++)
         {
-            InventorySlot existSlot = container.Find(slotInfo => slotInfo.item == itemList[i].item);
+            InventorySlotObject existSlotObject = container.Find(slotInfo => slotInfo.item == itemList[i].item);
             
-            if (existSlot != null)
+            if (existSlotObject != null)
             {
-                existSlot.AddAmount(itemList[i].amount);
+                existSlotObject.AddAmount(itemList[i].amount);
             }
             else if (container.Count < maxContainerSize)
             {
-                InventorySlot emptySlot = new InventorySlot();
-                emptySlot.item = itemList[i].item;
-                emptySlot.AddAmount(itemList[i].amount);
-                container.Add(emptySlot);
+                InventorySlotObject emptySlotObject = new InventorySlotObject();
+                emptySlotObject.item = itemList[i].item;
+                emptySlotObject.AddAmount(itemList[i].amount);
+                container.Add(emptySlotObject);
             }
             
             
@@ -67,11 +66,11 @@ public class Inventory : ScriptableObject
 }
 
 [System.Serializable]
-public class InventorySlot
+public class InventorySlotObject
 {
     public ItemObject item;
     public int amount;
-
+    
     public void AddAmount(int value)
     {
         amount += value;

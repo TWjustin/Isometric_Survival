@@ -21,23 +21,4 @@ public abstract class ItemObject : ScriptableObject
 }
 
 
-[System.Serializable]   // 可能要搬
-public class DropItemData
-{
-    public ItemObject item;
-    public int minAmount;
-    public int maxAmount;
-    
-}
 
-public class DropItem
-{
-    public ItemObject item;
-    public int amount;
-    
-    public DropItem(ItemObject _item, int _amount)
-    {
-        item = _item;
-        amount = _amount;
-    }
-}

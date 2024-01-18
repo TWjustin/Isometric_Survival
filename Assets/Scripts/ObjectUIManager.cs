@@ -13,6 +13,7 @@ public class ObjectUIManager : MonoBehaviour
     
     [SerializeField] private GameObject windowCanvasPrefab;
     [SerializeField] private GameObject itemAddedPopupPrefab;
+    [SerializeField] private GameObject healthBarCanvasPrefab;
 
 
     private void Awake()
@@ -28,12 +29,11 @@ public class ObjectUIManager : MonoBehaviour
     }
 
 
-    public void SpawnCanvas(Player player)
+    public void SpawnCanvas(Player player, TimedEventResource resource)
     {
         GameObject windowCanvas = Instantiate(windowCanvasPrefab, player.transform, false);
         TimedEventCanvas canvasScript = windowCanvas.GetComponent<TimedEventCanvas>();
-        canvasScript.resource = player.actingObject;
-        canvasScript.Initialize();
+        canvasScript.Initialize(resource);
     }
     
     
@@ -56,5 +56,11 @@ public class ObjectUIManager : MonoBehaviour
         popup.GetComponentInChildren<Image>().sprite = dropItem.item.itemImage;
     }
     
+    
+    public void SpawnHealthBar(GameObject target)
+    {
+        GameObject healthBarCanvas = Instantiate(healthBarCanvasPrefab, target.transform, false);
+        
+    }
     
 }

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class TimedEventCanvas : MonoBehaviour
 {
     private Player player;
-    [HideInInspector] public TimedEventResource resource;
     
     
 
@@ -28,7 +27,7 @@ public class TimedEventCanvas : MonoBehaviour
 
     
     
-    public void Initialize()
+    public void Initialize(TimedEventResource resource)
     {
         player = transform.parent.GetComponent<Player>();
 

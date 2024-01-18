@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class InventoryPanel : MonoBehaviour   // 不要弄成singleton
 {
+    [HideInInspector] public Player currentPlayer;
+    
     [SerializeField] private List<GameObject> slots = new List<GameObject>();
 
     private void Awake()
@@ -20,15 +22,18 @@ public class InventoryPanel : MonoBehaviour   // 不要弄成singleton
         }
     }
 
-    public void UpdateDisplay(Player currentPlayer)
+    public void UpdateDisplay(Player player)
     {
         ClearSlots();
         
-        List<InventorySlot> container = currentPlayer.inventory.container;
+        currentPlayer = player;
+        List<InventorySlotObject> container = player.inventory.container;
 
+        
         for (int i = 0; i < container.Count; i++)
         {
             Transform slot = transform.GetChild(i);
+            slot.GetComponent<InventorySlot>().item = container[i].item;
             slot.GetChild(0).GetComponent<Image>().sprite = container[i].item.itemImage;
             slot.GetComponentInChildren<Text>().text = container[i].amount.ToString();
         }

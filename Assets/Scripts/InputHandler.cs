@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class InputHandler : MonoBehaviour
 {
@@ -77,7 +78,13 @@ public class InputHandler : MonoBehaviour
                         currentPlayer =  clickedObject.GetComponent<Player>();
                         playerInfoPanel.SetActive(true);
                         inventoryPanelScript.UpdateDisplay(currentPlayer);
-                        
+
+                        for (int i = 0; i < inventoryPanelScript.transform.childCount; i++)
+                        {
+                            InventorySlot slot = inventoryPanelScript.transform.GetChild(i).GetComponent<InventorySlot>();
+                            slot.player = currentPlayer;
+                            slot.button.onClick.AddListener(slot.Equip);
+                        }
                         
                         
                         SetIndicatorGemAbove(clickedObject, 1.5f);

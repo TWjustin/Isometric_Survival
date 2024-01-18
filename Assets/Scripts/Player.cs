@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     
-    [SerializeField] private GameObject body;
     [HideInInspector] public NavMeshAgent agent;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
@@ -14,8 +14,13 @@ public class Player : MonoBehaviour
     public Inventory inventory;
     public InventoryPanel inventoryPanel;
     
-    public bool inProgress = false;
-    [HideInInspector] public TimedEventResource actingObject;
+    // public SpriteRenderer heldItemSprite;
+    public Image heldItemImage;
+    [Header("Do not Edit")]
+    public ItemObject heldItem;
+    
+    [HideInInspector] public bool inProgress = false;
+    [HideInInspector] public GameObject actingObject;
     private List<DropItem> actionReward;
     
 
@@ -23,14 +28,14 @@ public class Player : MonoBehaviour
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        animator = body.GetComponent<Animator>();
-        spriteRenderer = body.GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         
         agent.updateRotation = false;
         agent.updateUpAxis = false;
     }
     
-    private void Update()
+    private void Update()   // 動畫
     {
         if (agent.hasPath && agent.remainingDistance > 0.1f)
         {
@@ -52,6 +57,7 @@ public class Player : MonoBehaviour
             animator.SetBool("IsWalking", false);
         }
     }
+    
 
 
     public IEnumerator MoveThenExecute(GameObject target)
@@ -99,22 +105,67 @@ public class Player : MonoBehaviour
                 break;
             
             
-            case "Resource":
+            case "TimedEventResource":
 
-                actingObject = target.GetComponent<TimedEventResource>();
-                TimedEventResource resourceScript = target.GetComponent<TimedEventResource>();
-                
-                actionReward = resourceScript.CalculateDropItems();
+                actingObject = target;
+                TimedEventResource timedEventResource = target.GetComponent<TimedEventResource>();
+
+                actionReward = DropItemData.CalculateDropItems(timedEventResource);
                 if (inventory.CheckSlotAvailable(actionReward))
                 {
                     inProgress = true;
-                    ObjectUIManager.Instance.SpawnCanvas(this);     // canvas的coroutine
+                    ObjectUIManager.Instance.SpawnCanvas(this, actingObject.GetComponent<TimedEventResource>());     // canvas的coroutine
                     
                 }
 
                 break;
+            
+            case "DamageBasedResource":
+                
+                DamageBasedResource damageBasedResource = target.GetComponent<DamageBasedResource>();
+                ToolObject tool = heldItem as ToolObject;
+
+                if (tool && tool.toolType == damageBasedResource.toolNeeded)
+                {
+                    actingObject = target;
+                    actionReward = DropItemData.CalculateDropItems(damageBasedResource);
+                
+                
+                    if (inventory.CheckSlotAvailable(actionReward))
+                    {
+                        inProgress = true;
+                        ObjectUIManager.Instance.SpawnHealthBar(actingObject);
+
+                        animator.SetBool("IsUsingTool", true);
+                        AnimationClip clip = animator.GetCurrentAnimatorClipInfo(0)[0].clip;
+                        float clipLength = clip.length;
+
+                        int damage = tool.strength;
+                    
+                        while (damageBasedResource.currentHealth > 0)
+                        {
+                            StartCoroutine(TakeDamage(damageBasedResource, clipLength, damage));
+                        }
+                    
+                        Destroy(damageBasedResource.gameObject);
+                        animator.SetBool("IsUsingTool", false);
+                    }
+                }
+                
+                break;
+            
         }
     }
+    
+    
+    private IEnumerator TakeDamage(DamageBasedResource resource, float clipLength, int damage)
+    {
+        yield return new WaitForSeconds(clipLength);
+        
+        resource.currentHealth -= damage;
+    }
+    
+    
 
     public void GetReward()
     {

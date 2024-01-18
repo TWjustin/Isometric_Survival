@@ -18,7 +18,7 @@ public enum ToolType
 public class ToolObject : ItemObject
 {
     public ToolType toolType;
-    public float strength;  // 強度
+    public int strength;  // 強度
     public int durability;  // 耐久度，使用一次減一
     
     public void Awake()
